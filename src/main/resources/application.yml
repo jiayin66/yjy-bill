@@ -1,0 +1,15 @@
+server:
+  port: 10000
+spring:
+   mvc:
+      view:
+        prefix: classpath:/templates/
+        suffix: .html
+jp:
+  swagger:
+    basePackage: com.yjy.controller
+    apiInfo:
+      title: demo
+      description: demo
+      version: 1.0.0
+      email: 2864245248@qq.com
