@@ -16,25 +16,25 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/bill")
-@Api(tags="yjy·¹¿¨¹ÜÀíÏµÍ³")
+@Api(tags="yjyé¥­å¡ç®¡ç†ç³»ç»Ÿ")
 public class ExcelController {
 	@Autowired
 	private ExcelService excelService;
 	@PostMapping("/txt")
-	@ApiOperation("ºËĞÄË³Ğò£ºĞÕÃû¡¢½ğ¶î£¨Óà¶î¡¢ÏÂÒ»Î» || ÏÂÒ»Î»¡¢Óà¶î£© "
-			+ "Á½¸ö¿ÉÒÔ´øµãµÄÊı×Ö"
-			+ "Èı¸ö¿ÉÒÔ´øµãµÄÊı×Ö"
-			+ "Ã¿¸öÒªËØÖ®¼ä¿ÉÒÔÈÎÒâÎÄ±¾µ«±ØĞëÓĞ¸ô¿ª")
+	@ApiOperation("æ ¸å¿ƒé¡ºåºï¼šå§“åã€é‡‘é¢ï¼ˆä½™é¢ã€ä¸‹ä¸€ä½ || ä¸‹ä¸€ä½ã€ä½™é¢ï¼‰ "
+			+ "ä¸¤ä¸ªå¯ä»¥å¸¦ç‚¹çš„æ•°å­—"
+			+ "ä¸‰ä¸ªå¯ä»¥å¸¦ç‚¹çš„æ•°å­—"
+			+ "æ¯ä¸ªè¦ç´ ä¹‹é—´å¯ä»¥ä»»æ„æ–‡æœ¬ä½†å¿…é¡»æœ‰éš”å¼€")
 	public void readText(@RequestParam(value="record") String  record,@RequestParam(value="user") MultipartFile user,
 			HttpServletResponse response) {
 		excelService.readText(record,user,response);
 	}
 	
 	@PostMapping("/usertxt")
-	@ApiOperation("ºËĞÄË³Ğò£ºĞÕÃû¡¢½ğ¶î£¨Óà¶î¡¢ÏÂÒ»Î» || ÏÂÒ»Î»¡¢Óà¶î£© "
-			+ "Á½¸ö¿ÉÒÔ´øµãµÄÊı×Ö"
-			+ "Èı¸ö¿ÉÒÔ´øµãµÄÊı×Ö"
-			+ "Ã¿¸öÒªËØÖ®¼ä¿ÉÒÔÈÎÒâÎÄ±¾µ«±ØĞëÓĞ¸ô¿ª")
+	@ApiOperation("æ ¸å¿ƒé¡ºåºï¼šå§“åã€é‡‘é¢ï¼ˆä½™é¢ã€ä¸‹ä¸€ä½ || ä¸‹ä¸€ä½ã€ä½™é¢ï¼‰ "
+			+ "ä¸¤ä¸ªå¯ä»¥å¸¦ç‚¹çš„æ•°å­—"
+			+ "ä¸‰ä¸ªå¯ä»¥å¸¦ç‚¹çš„æ•°å­—"
+			+ "æ¯ä¸ªè¦ç´ ä¹‹é—´å¯ä»¥ä»»æ„æ–‡æœ¬ä½†å¿…é¡»æœ‰éš”å¼€")
 	public void readUserText(@RequestParam(value="record") String  record,@RequestParam(value="user") MultipartFile user,
 			HttpServletResponse response) {
 		excelService.readUserText(record,user,response);

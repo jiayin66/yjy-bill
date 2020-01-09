@@ -8,10 +8,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class User {
-	@Excel(name = "ĞòºÅ", orderNum = "0")
+	@Excel(name = "åºå·", orderNum = "0")
 	private Integer id;
 	
-	@Excel(name = "ĞÕÃû", orderNum = "1")
+	@Excel(name = "å§“å", orderNum = "1")
     private String name;
 	
 

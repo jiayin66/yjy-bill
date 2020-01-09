@@ -39,116 +39,116 @@ public class ExcelService {
 	private ExcelTemplateExporter excelTemplateExporter;
 
 	public void readText(String record, MultipartFile user, HttpServletResponse response) {
-		// 1.½âÎöÓÃ»§ÄÃµ½ÓÃ»§id¼¯ºÏ¡£Ôö¼ÓÓÃ»§ÖĞ²»ÄÜÖØ¸´µÄÅĞ¶Ï¡£
+		// 1.è§£æç”¨æˆ·æ‹¿åˆ°ç”¨æˆ·idé›†åˆã€‚å¢åŠ ç”¨æˆ·ä¸­ä¸èƒ½é‡å¤çš„åˆ¤æ–­ã€‚
 		List<String> userStrList = getUserName(user);
-		// 2.½âÎöÎÄ±¾¼ÇÂ¼ÄÃµ½ÓĞĞ§ĞĞ
+		// 2.è§£ææ–‡æœ¬è®°å½•æ‹¿åˆ°æœ‰æ•ˆè¡Œ
 		List<String> recordList = getRecordSpilit(record);
-		// 3¡¢´¦ÀíÊı¾İ
+		// 3ã€å¤„ç†æ•°æ®
 		List<RecodeModel> result = getResult(userStrList, recordList);
-		// 4¡¢µ¼³öexcel
-		excelTemplateExporter.exportExcel(result, "´¶ÊÂ°à-¼ÇÕË", "¼ÇÕË", RecodeModel.class, "´¶ÊÂ°à-¼ÇÕË-²»ÅÅĞò.xls", response);
+		// 4ã€å¯¼å‡ºexcel
+		excelTemplateExporter.exportExcel(result, "ç‚Šäº‹ç­-è®°è´¦", "è®°è´¦", RecodeModel.class, "ç‚Šäº‹ç­-è®°è´¦-ä¸æ’åº.xls", response);
 	}
 
 
 	private List<RecodeModel> getResult(List<String> userStrList, List<String> recordList) {
-		// £¨1£©×îÖÕ½á¹û
+		// ï¼ˆ1ï¼‰æœ€ç»ˆç»“æœ
 		List<RecodeModel> result = new ArrayList<RecodeModel>();
 		for (int i = 0; i < recordList.size(); i++) {
 			String txtRecord = recordList.get(i);
-			System.out.println("µÚ¡¾" + (i + 1) + "¡¿Ìõ´ıÅĞ¶ÏµÄ¼ÇÂ¼£º" + txtRecord);
-			// ¡¾1¡¿£¨È¥¾ßÌåÊ±¼ä£©°´ÕÕÕâ¸öÕıÔòÆ¥Åä¹ıÂËÊ±¼ä¸ñÊ½: ĞÜ¶«·É(211435812) 11:51:27
+			System.out.println("ç¬¬ã€" + (i + 1) + "ã€‘æ¡å¾…åˆ¤æ–­çš„è®°å½•ï¼š" + txtRecord);
+			// ã€1ã€‘ï¼ˆå»å…·ä½“æ—¶é—´ï¼‰æŒ‰ç…§è¿™ä¸ªæ­£åˆ™åŒ¹é…è¿‡æ»¤æ—¶é—´æ ¼å¼: ç†Šä¸œé£(211435812) 11:51:27
 			String patternTime = ".*(\\d{1,2}:\\d{1,2}:\\d{1,2}).*";
 			Matcher matcherTime = Pattern.compile(patternTime).matcher(txtRecord);
 			if (matcherTime.find()) {
-				System.out.println("-->ÎŞĞ§¹ıÂË£¬´ËÌõ¼ÇÂ¼ÊÇÊ±¼ä£¨Á½¸öÃ°ºÅÅĞ¶Ï£©" + txtRecord);
+				System.out.println("-->æ— æ•ˆè¿‡æ»¤ï¼Œæ­¤æ¡è®°å½•æ˜¯æ—¶é—´ï¼ˆä¸¤ä¸ªå†’å·åˆ¤æ–­ï¼‰" + txtRecord);
 				continue;
 			}
-			// ¡¾1.0¡¿£¨È¥ÈÕÆÚ£©°´ÕÕÕâ¸öÕıÔòÆ¥Åä¹ıÂËÊ±¼ä¸ñÊ½: 2019-09-11
+			// ã€1.0ã€‘ï¼ˆå»æ—¥æœŸï¼‰æŒ‰ç…§è¿™ä¸ªæ­£åˆ™åŒ¹é…è¿‡æ»¤æ—¶é—´æ ¼å¼: 2019-09-11
 			String patternDate = ".*(\\d{4}-\\d{2}-\\d{2}).*";
 			Matcher matchDate = Pattern.compile(patternDate).matcher(txtRecord);
 			if (matchDate.find()) {
-				System.out.println("-->ÎŞĞ§¹ıÂË£¬´ËÌõ¼ÇÂ¼ÊÇÊ±¼ä£¨ÈÕÆÚ¸ñÊ½£©" + txtRecord);
+				System.out.println("-->æ— æ•ˆè¿‡æ»¤ï¼Œæ­¤æ¡è®°å½•æ˜¯æ—¶é—´ï¼ˆæ—¥æœŸæ ¼å¼ï¼‰" + txtRecord);
 				continue;
 			}
 
-			// ¡¾2.0¡¿£¨Æ¥Åä2¸öÊı×Ö£©  ÄôöÎÓÂ5.5 Óà¶î819ÏÂÒ»Î»ÍõÁÁÃ÷£¬Àî½÷ÑÓ 3 ÏÂÒ»Î»/¸ö ÕÅÖ¾Áú Óà¶î 917
-			//ÒÔÊı×Ö²ğ·ÖÈı¶Î£¬Êı×Ö°üº¬Ğ¡Êıµã¡£Æ¥Åä´ø2·İÊı×ÖµÄ¼ÇÂ¼
+			// ã€2.0ã€‘ï¼ˆåŒ¹é…2ä¸ªæ•°å­—ï¼‰  è‚é‘«å‹‡5.5 ä½™é¢819ä¸‹ä¸€ä½ç‹äº®æ˜ï¼Œæè°¨å»¶ 3 ä¸‹ä¸€ä½/ä¸ª å¼ å¿—é¾™ ä½™é¢ 917
+			//ä»¥æ•°å­—æ‹†åˆ†ä¸‰æ®µï¼Œæ•°å­—åŒ…å«å°æ•°ç‚¹ã€‚åŒ¹é…å¸¦2ä»½æ•°å­—çš„è®°å½•
 			String patternTwoMatch = "^[^0-9\\.]*([0-9\\.]+)[^0-9\\.]+([0-9\\.]+)[^0-9\\.]*$";
 			Matcher matcherTwo = Pattern.compile(patternTwoMatch).matcher(txtRecord);
 			if (matcherTwo.find()) {
-				System.out.println("-->ÓĞĞ§´ı´¦Àí£¬´ËÌõ¼ÇÂ¼ÓĞÁ½¸ö½ğ¶î£º" + txtRecord);
-				// ÕæÕıµÄ´¦ÀíÊı¾İ
+				System.out.println("-->æœ‰æ•ˆå¾…å¤„ç†ï¼Œæ­¤æ¡è®°å½•æœ‰ä¸¤ä¸ªé‡‘é¢ï¼š" + txtRecord);
+				// çœŸæ­£çš„å¤„ç†æ•°æ®
 				RecodeModel recodeModel = getRecodeModel(txtRecord, matcherTwo, userStrList);
 				if (recodeModel != null) {
-					// (1.1)Ìí¼ÓÓĞĞ§Êı¾İ
+					// (1.1)æ·»åŠ æœ‰æ•ˆæ•°æ®
 					result.add(recodeModel);
 				}else {
-					throw new RuntimeException("Ê¶±ğ³ö´í£º"+txtRecord);
+					throw new RuntimeException("è¯†åˆ«å‡ºé”™ï¼š"+txtRecord);
 				}
 				continue;
 			}
 
-			// ¡¾2.1¡¿£¨Ê¶±ğ´íÎó£©ÉÏÃæµÄ¾«×¼Æ¥ÅäÈç¹ûÆ¥Åä²»ÉÏËµÃ÷ÓĞÈË½ğ¶îÖĞ´øÓĞ¿Õ¸ñµÈÌØÊâ×Ö·û(ÓëÉÏÃæÇø±ğÊÇÃ»ÓĞ¿ªÊ¼ºÍ½áÊøÏŞÖÆ)
+			// ã€2.1ã€‘ï¼ˆè¯†åˆ«é”™è¯¯ï¼‰ä¸Šé¢çš„ç²¾å‡†åŒ¹é…å¦‚æœåŒ¹é…ä¸ä¸Šè¯´æ˜æœ‰äººé‡‘é¢ä¸­å¸¦æœ‰ç©ºæ ¼ç­‰ç‰¹æ®Šå­—ç¬¦(ä¸ä¸Šé¢åŒºåˆ«æ˜¯æ²¡æœ‰å¼€å§‹å’Œç»“æŸé™åˆ¶)
 			String patternTwoMatchError = "[^0-9\\.]*([0-9\\.]+)[^0-9\\.]+([0-9\\.]+)[^0-9\\.]*";
 			Matcher matcherTwoError = Pattern.compile(patternTwoMatchError).matcher(txtRecord);
 			if (matcherTwoError.find()) {
-				throw new RuntimeException("ÇëºËÊµ£¬´ËÈË½ğ¶îÊäÈë¸ñÊ½´íÎó£º" + txtRecord);
+				throw new RuntimeException("è¯·æ ¸å®ï¼Œæ­¤äººé‡‘é¢è¾“å…¥æ ¼å¼é”™è¯¯ï¼š" + txtRecord);
 			}
 
-			// ¡¾3.0¡¿£¨¾«×¼Ê¶±ğ1¸öÊı×Ö£©Ã»ÓĞ±¨Óà¶î£¬Ö»±¨µ±Ç°½ğ¶î £ºĞÜ¶«·É 4.5 ÏÂÒ»¸ö Îº³å£¬ĞÜ¶«·É 4.5
+			// ã€3.0ã€‘ï¼ˆç²¾å‡†è¯†åˆ«1ä¸ªæ•°å­—ï¼‰æ²¡æœ‰æŠ¥ä½™é¢ï¼ŒåªæŠ¥å½“å‰é‡‘é¢ ï¼šç†Šä¸œé£ 4.5 ä¸‹ä¸€ä¸ª é­å†²ï¼Œç†Šä¸œé£ 4.5
 			String patternOneMatch = "^([^0-9\\.]*)([0-9\\.]+)([^0-9\\.]*)$";
 			Matcher matcherOne = Pattern.compile(patternOneMatch).matcher(txtRecord);
 			if (matcherOne.find()) {
-				System.out.println("-->ÓĞĞ§´ı´¦Àí£¬Ö»ÓĞÒ»¸ö½ğ¶î£¬Ã»ÓĞ±¨Óà¶îµÄ¼ÇÂ¼£º" + txtRecord);
+				System.out.println("-->æœ‰æ•ˆå¾…å¤„ç†ï¼Œåªæœ‰ä¸€ä¸ªé‡‘é¢ï¼Œæ²¡æœ‰æŠ¥ä½™é¢çš„è®°å½•ï¼š" + txtRecord);
 				RecodeModel recodeModel = setOneMatch(matcherOne, txtRecord, userStrList);
 				result.add(recodeModel);
 				continue;
 			}
 
-			// ¡¾3.1¡¿£¨²»¾«×¼Ê¶±ğ1¸öÊı×Ö£©¶Ô·Ç¾«×¼Æ¥ÅäµÄ±¨´í
+			// ã€3.1ã€‘ï¼ˆä¸ç²¾å‡†è¯†åˆ«1ä¸ªæ•°å­—ï¼‰å¯¹éç²¾å‡†åŒ¹é…çš„æŠ¥é”™
 			String patternOneMatchError = "^([^0-9\\.]*)([0-9\\.]+)([^0-9\\.]*)$";
 			Matcher matcherOneError = Pattern.compile(patternOneMatchError).matcher(txtRecord);
 			if (matcherOneError.find()) {
-				throw new RuntimeException("ÇëºËÊµ£¬´ËÈË½ğ¶îÊäÈë¸ñÊ½´íÎó£º" + txtRecord);
+				throw new RuntimeException("è¯·æ ¸å®ï¼Œæ­¤äººé‡‘é¢è¾“å…¥æ ¼å¼é”™è¯¯ï¼š" + txtRecord);
 			}
 
-			// ¡¾4¡¿Æ¥ÅäÕâÖÖ £ºÑÏÖ¾ÁèÏÂÒ»Î» ÕòÑô /ÏÂÒ»¸ö £¨Õâ¸öÒªÔÚ3Ö®ºó£¬±ÜÃâ°ÑÕı³£Êı¾İÀ¹½Ø£©
-			String patternNext = "^(\\D*)ÏÂÒ»(\\D*)$";
+			// ã€4ã€‘åŒ¹é…è¿™ç§ ï¼šä¸¥å¿—å‡Œä¸‹ä¸€ä½ é•‡é˜³ /ä¸‹ä¸€ä¸ª ï¼ˆè¿™ä¸ªè¦åœ¨3ä¹‹åï¼Œé¿å…æŠŠæ­£å¸¸æ•°æ®æ‹¦æˆªï¼‰
+			String patternNext = "^(\\D*)ä¸‹ä¸€(\\D*)$";
 			Matcher matcherNext = Pattern.compile(patternNext).matcher(txtRecord);
 			if (matcherNext.find()) {
-				// (1.2)ĞŞ¸ÄÓĞĞ§Êı¾İ
-				// (2.2)ĞŞ¸ÄÖĞ¼ä±íÊı¾İ
-				System.out.println("-->ÓĞĞ§´ı´¦Àí£¬´ËÌõ¼ÇÂ¼ÊÇµ¥´¿µÄ±¨ÏÂÒ»Î»" + txtRecord);
+				// (1.2)ä¿®æ”¹æœ‰æ•ˆæ•°æ®
+				// (2.2)ä¿®æ”¹ä¸­é—´è¡¨æ•°æ®
+				System.out.println("-->æœ‰æ•ˆå¾…å¤„ç†ï¼Œæ­¤æ¡è®°å½•æ˜¯å•çº¯çš„æŠ¥ä¸‹ä¸€ä½" + txtRecord);
 				setNext(result, matcherNext);
 				continue;
 			}
 
-			System.err.println("-->ÎŞĞ§¹ıÂË,Ã»ÓĞ±»¹æÔòÀ¹½ØµÄ¼ÇÂ¼:" + txtRecord);
+			System.err.println("-->æ— æ•ˆè¿‡æ»¤,æ²¡æœ‰è¢«è§„åˆ™æ‹¦æˆªçš„è®°å½•:" + txtRecord);
 		}
 
-		System.out.println("----------------------½âÎöÍê³É-------------------------------");
-		System.out.println("ÍêÕû¼ÇÂ¼¸öÊı:" + result.size() + ",ËùÓĞÊı¾İÔ­Ë³ĞòÈçÏÂÇëºË¶Ô£º");
+		System.out.println("----------------------è§£æå®Œæˆ-------------------------------");
+		System.out.println("å®Œæ•´è®°å½•ä¸ªæ•°:" + result.size() + ",æ‰€æœ‰æ•°æ®åŸé¡ºåºå¦‚ä¸‹è¯·æ ¸å¯¹ï¼š");
 		for (RecodeModel recodeModel : result) {
-			// ¶ÔnextÖĞ°üº¬µÄ¸÷ÖÖÂÒÊı¾İ´¦Àí
+			// å¯¹nextä¸­åŒ…å«çš„å„ç§ä¹±æ•°æ®å¤„ç†
 			String next = recodeModel.getNext();
 			if (StringUtils.isNotBlank(next)) {
 				try {
-					next = subSpacialChar(next).replace("ÏÂÒ»Î»", "").replace("ÏÂÒ»¸ö", "").replace("£¬", "").replace(",", "")
-							.replace("¸ö", "").replace("Î»", "").replace(" ", "");
+					next = subSpacialChar(next).replace("ä¸‹ä¸€ä½", "").replace("ä¸‹ä¸€ä¸ª", "").replace("ï¼Œ", "").replace(",", "")
+							.replace("ä¸ª", "").replace("ä½", "").replace(" ", "");
 				} catch (Exception e) {
 					next = null;
 				}
 				recodeModel.setNext(next);
 			}
-			// ¶ÔÓà¶î½øĞĞ³õÊ¼»¯
+			// å¯¹ä½™é¢è¿›è¡Œåˆå§‹åŒ–
 			if (recodeModel.getAllMoney() == null) {
 				recodeModel.setAllMoney(new BigDecimal(0));
 			}
 			System.out.println(JSON.toJSONString(recodeModel));
 		}
-		//Óà¶îµ¹ĞòÅÅĞò
+		//ä½™é¢å€’åºæ’åº
 		Collections.sort(result, new Comparator() {
-				// ÅÅĞò¹æÔòÔ­Òò£¬Èç¹ûÃ»ÓĞ¾ÍÄ¬ÈÏ0°Ñ
+				// æ’åºè§„åˆ™åŸå› ï¼Œå¦‚æœæ²¡æœ‰å°±é»˜è®¤0æŠŠ
 				public int compare(Object o1, Object o2) {
 					RecodeModel b = (RecodeModel) o1;
 					RecodeModel a = (RecodeModel) o2;
@@ -160,7 +160,7 @@ public class ExcelService {
 	}
 	
 	/**
-	 * ½ØÈ¡ÌØÊâ63µÄ×Ö·û
+	 * æˆªå–ç‰¹æ®Š63çš„å­—ç¬¦
 	 * @param str
 	 * @return
 	 */
@@ -177,12 +177,12 @@ public class ExcelService {
 				count++;
 			}
 		}
-		//²»°üº¬63µÄÌØÊâ×Ö·û
+		//ä¸åŒ…å«63çš„ç‰¹æ®Šå­—ç¬¦
 		if(count==0) {
 			return str;
 		}
 		byte[]  result=new byte[bytes.length-count];
-		//Óöµ½63¾Í×ÔÔö2¸ö
+		//é‡åˆ°63å°±è‡ªå¢2ä¸ª
 		int x=0;
 		int y=0;
 		for(int i=0;i<bytes.length;i++) {
@@ -212,13 +212,13 @@ public class ExcelService {
 			if(name.indexOf(recodeModel.getName())!=-1) {
 				realName=recodeModel.getName();
 				recodeModel.setNext(next);
-				System.out.println("---->>³É¹¦ÉèÖÃÏÂÒ»Î»£º"+JSON.toJSONString(recodeModel));
+				System.out.println("---->>æˆåŠŸè®¾ç½®ä¸‹ä¸€ä½ï¼š"+JSON.toJSONString(recodeModel));
 			}
 			
 		}
-		//ÏÂÃæÊÇĞŞ¸ÄÖĞ¼ä±íµÄ´úÂë
+		//ä¸‹é¢æ˜¯ä¿®æ”¹ä¸­é—´è¡¨çš„ä»£ç 
 		if(realName==null) {
-			//ËµÃ÷ÉÏÃæµÄ½á¹ûÃ»ÓĞÆ¥ÅäÉÏ£¬±¾ÌõÊı¾İÊÇÎŞĞ§µÄ
+			//è¯´æ˜ä¸Šé¢çš„ç»“æœæ²¡æœ‰åŒ¹é…ä¸Šï¼Œæœ¬æ¡æ•°æ®æ˜¯æ— æ•ˆçš„
 			return;
 		}
 	}
@@ -233,7 +233,7 @@ public class ExcelService {
 	}
 
 	/**
-	 * ¸ù¾İÌáÈ¡µÄnameºÍÓÃ»§ÁĞ±íµÄname±È¶Ô
+	 * æ ¹æ®æå–çš„nameå’Œç”¨æˆ·åˆ—è¡¨çš„nameæ¯”å¯¹
 	 * 
 	 * @param txtRecord
 	 * @param userStrList
@@ -242,7 +242,7 @@ public class ExcelService {
 	 */
 	private String getRealName(String txtRecord, List<String> userStrList, String userName) {
 		if (StringUtils.isBlank(userName)) {
-			throw new RuntimeException("±¨²ÍÎ´±¨Ïû·ÑÕßÃû×Ö£¡ºËÊµ´ËÌõÏû·Ñ¼ÇÂ¼¹éÊôÄÄÎ»ÈËÔ±£¬ÊÖ¶¯²¹³äĞÕÃûÖØĞÂ³¢ÊÔ£¡¼ÇÂ¼Îª£º" + txtRecord);
+			throw new RuntimeException("æŠ¥é¤æœªæŠ¥æ¶ˆè´¹è€…åå­—ï¼æ ¸å®æ­¤æ¡æ¶ˆè´¹è®°å½•å½’å±å“ªä½äººå‘˜ï¼Œæ‰‹åŠ¨è¡¥å……å§“åé‡æ–°å°è¯•ï¼è®°å½•ä¸ºï¼š" + txtRecord);
 		}
 		String result = null;
 		for (String str : userStrList) {
@@ -252,14 +252,14 @@ public class ExcelService {
 			}
 		}
 		if (result == null) {
-			throw new RuntimeException("ÓÃ»§ÁĞ±íÈ±Ê§´ËÈË£¬²¹³äÓÃ»§ÁĞ±íÖØĞÂ³¢ÊÔ!¼ÇÂ¼Îª£º" + txtRecord);
+			throw new RuntimeException("ç”¨æˆ·åˆ—è¡¨ç¼ºå¤±æ­¤äººï¼Œè¡¥å……ç”¨æˆ·åˆ—è¡¨é‡æ–°å°è¯•!è®°å½•ä¸ºï¼š" + txtRecord);
 		}
 		return result;
 	}
 
 	/**
-	 * Á½¸ö²ÎÊıµÄÆ¥Åä eg£º
-	 * "ĞìÀ×?9.5?Óà¶î248?ÏÂÒ»Î»Æ¤¼ÒöÎ","Æ¤¼ÒöÎ?7.5?Óà¶î241?ÏÂÒ»Î»?ÂŞÑÇÀö","ÂŞÑÇÀö?7.5?Óà¶î?233.81?ÏÂÒ»Î»?Î¤´Ï","ÂŞ³å?7.5?Óà173.81?ÏÂÒ»Î»?ĞÜ±ö","ÕÅÑÅö©?7.5?Óà¶î181?ÏÂÒ»Î»?ÂŞ³å","ĞÜ±ö?7.5Óà¶î166?ÏÂÒ»Î»?ÍõÒí","ÍõÒí?5.5?Óà¶î160?ÏÂÒ»Î»ÄôöÎÓÂ","Í¯Ãô?8.5?Óà¶î188?ÏÂÒ»Î»ÕÅÑÅö©","ÁºÃô?14.5?Óà¶î203.5?ÏÂÒ»Î»¹¨º«×³","Î¤´Ï?15.5?Óà¶î?218?ÏÂÒ»Î»?ÁºÃô","¹¨º«×³??6.5??Óà¶î?196?ÏÂÒ»Î»?Í¯Ãô","ĞíĞ¡»¨??7.5??Óà¶î?145?ÏÂÒ»Î»?×ó³ÉÔª","×ó³ÉÔª13Óà¶î132.8ÏÂÒ»Î»ÈÎÎª","ÄôöÎÓÂ7.5?Óà¶î153?ÏÂÒ»Î»?ĞíĞ¡»¨","ÈÎÎª?8.5?Óà¶î124.31?ÏÂÒ»Î»?Í¯±´","Í¯±´?9?Óà¶î113?ÏÂÒ»Î»?Î¤´Ï","ºØ¿¡¿­?6?Óà¶î?109?ÏÂÒ»Î»?Ãç¸Õ","¸üÕı£ºÓà¶î115","Àî¼ÑºÀ?2.5?Óà¶î?83.81?ÏÂÒ»Ò³?À×Óîºã","À×Óîºã?1?Óà¶î?82.81?ÏÂÒ»Î»?Æî³Ì³©","À×ÕÜ?2.5?Óà¶î?86.31ÏÂÒ»Î»Àî¼ÑºÀ","Æî³Ì³©??14??Óà¶î???68.81??ÏÂÒ»Î»null","Ãç¸Õ?5?Óà¶î?104?ÏÂÒ»Î»?Î¤´Ï","ÄãÃÇÖ®¼äÈ±ÉÙÒ»Á½¸öÈË±¨ÕË£¬ÖĞ¼ä¿÷Ëğ15.5Ôª"]
+	 * ä¸¤ä¸ªå‚æ•°çš„åŒ¹é… egï¼š
+	 * "å¾é›·?9.5?ä½™é¢248?ä¸‹ä¸€ä½çš®å®¶é‘«","çš®å®¶é‘«?7.5?ä½™é¢241?ä¸‹ä¸€ä½?ç½—äºšä¸½","ç½—äºšä¸½?7.5?ä½™é¢?233.81?ä¸‹ä¸€ä½?éŸ¦èª","ç½—å†²?7.5?ä½™173.81?ä¸‹ä¸€ä½?ç†Šå®¾","å¼ é›…é›¯?7.5?ä½™é¢181?ä¸‹ä¸€ä½?ç½—å†²","ç†Šå®¾?7.5ä½™é¢166?ä¸‹ä¸€ä½?ç‹ç¿¼","ç‹ç¿¼?5.5?ä½™é¢160?ä¸‹ä¸€ä½è‚é‘«å‹‡","ç«¥æ•?8.5?ä½™é¢188?ä¸‹ä¸€ä½å¼ é›…é›¯","æ¢æ•?14.5?ä½™é¢203.5?ä¸‹ä¸€ä½é¾šéŸ©å£®","éŸ¦èª?15.5?ä½™é¢?218?ä¸‹ä¸€ä½?æ¢æ•","é¾šéŸ©å£®??6.5??ä½™é¢?196?ä¸‹ä¸€ä½?ç«¥æ•","è®¸å°èŠ±??7.5??ä½™é¢?145?ä¸‹ä¸€ä½?å·¦æˆå…ƒ","å·¦æˆå…ƒ13ä½™é¢132.8ä¸‹ä¸€ä½ä»»ä¸º","è‚é‘«å‹‡7.5?ä½™é¢153?ä¸‹ä¸€ä½?è®¸å°èŠ±","ä»»ä¸º?8.5?ä½™é¢124.31?ä¸‹ä¸€ä½?ç«¥è´","ç«¥è´?9?ä½™é¢113?ä¸‹ä¸€ä½?éŸ¦èª","è´ºä¿Šå‡¯?6?ä½™é¢?109?ä¸‹ä¸€ä½?è‹—åˆš","æ›´æ­£ï¼šä½™é¢115","æä½³è±ª?2.5?ä½™é¢?83.81?ä¸‹ä¸€é¡µ?é›·å®‡æ’","é›·å®‡æ’?1?ä½™é¢?82.81?ä¸‹ä¸€ä½?ç¥ç¨‹ç•…","é›·å“²?2.5?ä½™é¢?86.31ä¸‹ä¸€ä½æä½³è±ª","ç¥ç¨‹ç•…??14??ä½™é¢???68.81??ä¸‹ä¸€ä½null","è‹—åˆš?5?ä½™é¢?104?ä¸‹ä¸€ä½?éŸ¦èª","ä½ ä»¬ä¹‹é—´ç¼ºå°‘ä¸€ä¸¤ä¸ªäººæŠ¥è´¦ï¼Œä¸­é—´äºæŸ15.5å…ƒ"]
 	 * 24
 	 * 
 	 * @param txtRecord
@@ -268,24 +268,24 @@ public class ExcelService {
 	private RecodeModel getRecodeModel(String txtRecord, Matcher matcherOne, List<String> userStrList) {
 		BigDecimal money = new BigDecimal(matcherOne.group(1));
 		BigDecimal allMoney = new BigDecimal(matcherOne.group(2));
-		// ¡¾2.1¡¿Ö»È¡¿ªÍ·ºÍÄ©Î²Êı¾İ
+		// ã€2.1ã€‘åªå–å¼€å¤´å’Œæœ«å°¾æ•°æ®
 		String patternMatch = "([^0-9\\.]*)[0-9\\.]+([^0-9\\.]+)[0-9\\.]+([^0-9\\.]*)";
 		Matcher matcher = Pattern.compile(patternMatch).matcher(txtRecord);
 		if (!matcher.find()) {
-			System.err.println("È¡¿ªÍ·ºÍ½áÎ²Ã»ÓĞÆ¥ÅäÉÏ£º" + txtRecord);
+			System.err.println("å–å¼€å¤´å’Œç»“å°¾æ²¡æœ‰åŒ¹é…ä¸Šï¼š" + txtRecord);
 			return null;
 		}
 		String userName = matcher.group(1);
 		String nexName = matcher.group(3);
-		if (matcher.group(2).contains("ÏÂÒ»")) {
-			// ÏÂÒ»µÈÊı¾İ·ÅÔÚºóÃæÇå³ı
+		if (matcher.group(2).contains("ä¸‹ä¸€")) {
+			// ä¸‹ä¸€ç­‰æ•°æ®æ”¾åœ¨åé¢æ¸…é™¤
 			nexName = matcher.group(2);
-			if (nexName.contains("Óà¶î")) {
-				nexName = nexName.replace("Óà¶î", "").replace("Óà", "");
+			if (nexName.contains("ä½™é¢")) {
+				nexName = nexName.replace("ä½™é¢", "").replace("ä½™", "");
 			}
 		}
 
-		// ¡¾2.2¡¿±ØĞë¸úÊı¾İ¿âÓÃ»§Ãû±£³ÖÒ»ÖÂ£¬·ñÔò¼ÇÕËÖØ¸´¡£ÏÂÒ»Î»ÎŞĞè½ØÈ¡
+		// ã€2.2ã€‘å¿…é¡»è·Ÿæ•°æ®åº“ç”¨æˆ·åä¿æŒä¸€è‡´ï¼Œå¦åˆ™è®°è´¦é‡å¤ã€‚ä¸‹ä¸€ä½æ— éœ€æˆªå–
 		userName = getRealName(txtRecord, userStrList, userName);
 
 		RecodeModel recodeModel = new RecodeModel(userName, money, allMoney, nexName);
@@ -293,7 +293,7 @@ public class ExcelService {
 	}
 
 	/*
-	 * ·â×°¹ı³Ì
+	 * å°è£…è¿‡ç¨‹
 	 */
 	private List<String> getUserName(MultipartFile user) {
 		List<User> userList = getTxt(user, User.class);
@@ -308,7 +308,7 @@ public class ExcelService {
 	private List<String> getRecordSpilit(String record) {
 		List<String> result = new ArrayList<String>();
 		if (StringUtils.isEmpty(record)) {
-			throw new RuntimeException("¼ÇÂ¼Îª¿ÕÇë¼ì²é£¡");
+			throw new RuntimeException("è®°å½•ä¸ºç©ºè¯·æ£€æŸ¥ï¼");
 		}
 		String[] split = record.split("(\r?\n)");
 		for (String item : split) {
@@ -322,7 +322,7 @@ public class ExcelService {
 
 
 	/**
-	 * Í¨ÓÃµÄ¶ÁÈ¡excle·½·¨
+	 * é€šç”¨çš„è¯»å–excleæ–¹æ³•
 	 * 
 	 * @param file
 	 * @param cla
@@ -337,9 +337,9 @@ public class ExcelService {
 			List<T> list = resul.getList();
 			return list;
 		} catch (Exception e) {
-			System.out.println("´íÎóÔ­Òò£º" + e.getMessage());
+			System.out.println("é”™è¯¯åŸå› ï¼š" + e.getMessage());
 			e.printStackTrace();
-			throw new RuntimeException("¶ÁÈ¡:" + cla.getSimpleName() + "excelÊı¾İÊ§°Ü");
+			throw new RuntimeException("è¯»å–:" + cla.getSimpleName() + "excelæ•°æ®å¤±è´¥");
 
 		}
 		// return null;
@@ -347,14 +347,14 @@ public class ExcelService {
 
 
 	public void readUserText(String record, MultipartFile user, HttpServletResponse response) {
-		// 1.½âÎöÓÃ»§ÄÃµ½ÓÃ»§id¼¯ºÏ¡£Ôö¼ÓÓÃ»§ÖĞ²»ÄÜÖØ¸´µÄÅĞ¶Ï¡£
+		// 1.è§£æç”¨æˆ·æ‹¿åˆ°ç”¨æˆ·idé›†åˆã€‚å¢åŠ ç”¨æˆ·ä¸­ä¸èƒ½é‡å¤çš„åˆ¤æ–­ã€‚
 				List<String> userStrList = getUserNameWithTxt(user);
-				// 2.½âÎöÎÄ±¾¼ÇÂ¼ÄÃµ½ÓĞĞ§ĞĞ
+				// 2.è§£ææ–‡æœ¬è®°å½•æ‹¿åˆ°æœ‰æ•ˆè¡Œ
 				List<String> recordList = getRecordSpilit(record);
-				// 3¡¢´¦ÀíÊı¾İ
+				// 3ã€å¤„ç†æ•°æ®
 				List<RecodeModel> result = getResult(userStrList, recordList);
-				// 4¡¢µ¼³öexcel
-				excelTemplateExporter.exportExcel(result, "´¶ÊÂ°à-¼ÇÕË", "¼ÇÕË", RecodeModel.class, "´¶ÊÂ°à-¼ÇÕË-²»ÅÅĞò.xls", response);
+				// 4ã€å¯¼å‡ºexcel
+				excelTemplateExporter.exportExcel(result, "ç‚Šäº‹ç­-è®°è´¦", "è®°è´¦", RecodeModel.class, "ç‚Šäº‹ç­-è®°è´¦-ä¸æ’åº.xls", response);
 		
 	}
 
@@ -370,12 +370,12 @@ public class ExcelService {
 					 readLine=readLine.trim().replace(" ", "");
 					 txtRecordList.add(readLine);
 				 }
-				 readLine = bf.readLine(); // Ò»´Î¶ÁÈëÒ»ĞĞÊı¾İ  
+				 readLine = bf.readLine(); // ä¸€æ¬¡è¯»å…¥ä¸€è¡Œæ•°æ®  
 	            }  
 		} catch (Exception e) {
-			System.out.println("´íÎóÔ­Òò£º"+e.getMessage());
+			System.out.println("é”™è¯¯åŸå› ï¼š"+e.getMessage());
 			e.printStackTrace();
-			throw new RuntimeException("¶ÁÈ¡txtÊı¾İÊ§°Ü");
+			throw new RuntimeException("è¯»å–txtæ•°æ®å¤±è´¥");
 		}
 		return txtRecordList;
 	}
