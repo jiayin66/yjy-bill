@@ -1,12 +1,15 @@
 package com.yjy.service;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -21,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.http.fileupload.FileItem;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -362,6 +366,33 @@ public class ExcelService {
 		List<RecodeModel> result = getResult(userStrList, recordList);
 		// 4、导出excel
 		excelTemplateExporter.exportExcel(result, "炊事班-记账", "记账", RecodeModel.class, "炊事班-记账-不排序.xls", response);
+		// 5、最后不报错才执行替换原来的文件的操作
+		if(user!=null) {
+			replaceUser(user);
+		}
+	}
+
+
+	private void replaceUser(MultipartFile user) {
+		try {
+			InputStream inputStream = user.getInputStream();
+			InputStreamReader ir = new InputStreamReader(inputStream, "UTF-8");
+			BufferedReader br = new BufferedReader(ir);
+
+			File file = new ClassPathResource("/全量的用户.txt").getFile();
+			FileOutputStream fileOut = new FileOutputStream(file);
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fileOut, "UTF-8"));
+
+			int i = 0;
+			while ((i = br.read()) != -1) {
+				bw.write(i);
+			}
+			bw.close();
+			br.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 	}
 
@@ -375,7 +406,6 @@ public class ExcelService {
 
 	private List<String> getUserNameWithTxt(InputStream in) {
 		List<String> txtRecordList=new ArrayList<String>();	
-		File user=new File("/yjy.txt");
 		 try {
 			InputStreamReader is = new InputStreamReader(in);
 			BufferedReader bf = new BufferedReader(is);
@@ -393,8 +423,6 @@ public class ExcelService {
 			throw new RuntimeException("读取txt数据失败");
 		}
 		//替换目标文件
-		 
-		
 		return txtRecordList;
 	}
 
