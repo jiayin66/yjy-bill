@@ -1,5 +1,7 @@
 package com.yjy.controller;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +37,8 @@ public class ExcelController {
 			+ "两个可以带点的数字"
 			+ "三个可以带点的数字"
 			+ "每个要素之间可以任意文本但必须有隔开")
-	public void readUserText(@RequestParam(value="record") String  record,@RequestParam(value="user") MultipartFile user,
-			HttpServletResponse response) {
+	public void readUserText(@RequestParam(value="record") String  record,@RequestParam(value="user",required=false) MultipartFile user,
+			HttpServletResponse response) throws IOException {
 		excelService.readUserText(record,user,response);
 	}
 	

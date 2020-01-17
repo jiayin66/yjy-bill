@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -346,23 +347,37 @@ public class ExcelService {
 	}
 
 
-	public void readUserText(String record, MultipartFile user, HttpServletResponse response) {
+	public void readUserText(String record, MultipartFile user, HttpServletResponse response) throws IOException {
 		// 1.解析用户拿到用户id集合。增加用户中不能重复的判断。
-				List<String> userStrList = getUserNameWithTxt(user);
-				// 2.解析文本记录拿到有效行
-				List<String> recordList = getRecordSpilit(record);
-				// 3、处理数据
-				List<RecodeModel> result = getResult(userStrList, recordList);
-				// 4、导出excel
-				excelTemplateExporter.exportExcel(result, "炊事班-记账", "记账", RecodeModel.class, "炊事班-记账-不排序.xls", response);
-		
+		List<String> userStrList = null;
+		if (user == null) {
+			InputStream in=getLocalUserIo();
+			userStrList=getUserNameWithTxt(in);
+		} else {
+			userStrList = getUserNameWithTxt(user.getInputStream());
+		}
+		// 2.解析文本记录拿到有效行
+		List<String> recordList = getRecordSpilit(record);
+		// 3、处理数据
+		List<RecodeModel> result = getResult(userStrList, recordList);
+		// 4、导出excel
+		excelTemplateExporter.exportExcel(result, "炊事班-记账", "记账", RecodeModel.class, "炊事班-记账-不排序.xls", response);
+
 	}
 
 
-	private List<String> getUserNameWithTxt(MultipartFile user) {
+	private InputStream getLocalUserIo() {
+		//拿到对应的数据
+		InputStream resourceAsStream = this.getClass().getResourceAsStream("/全量的用户.txt");
+		return resourceAsStream;
+	}
+
+
+	private List<String> getUserNameWithTxt(InputStream in) {
 		List<String> txtRecordList=new ArrayList<String>();	
+		File user=new File("/yjy.txt");
 		 try {
-			InputStreamReader is = new InputStreamReader(user.getInputStream());
+			InputStreamReader is = new InputStreamReader(in);
 			BufferedReader bf = new BufferedReader(is);
 			String readLine = bf.readLine();
 			 while (readLine != null) {  
@@ -377,6 +392,9 @@ public class ExcelService {
 			e.printStackTrace();
 			throw new RuntimeException("读取txt数据失败");
 		}
+		//替换目标文件
+		 
+		
 		return txtRecordList;
 	}
 
