@@ -378,8 +378,9 @@ public class ExcelService {
 			InputStream inputStream = user.getInputStream();
 			InputStreamReader ir = new InputStreamReader(inputStream, "UTF-8");
 			BufferedReader br = new BufferedReader(ir);
-
-			File file = new ClassPathResource("/全量的用户.txt").getFile();
+			
+			
+			File file = new ClassPathResource("/user.txt").getFile();
 			FileOutputStream fileOut = new FileOutputStream(file);
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fileOut, "UTF-8"));
 
@@ -399,7 +400,10 @@ public class ExcelService {
 
 	private InputStream getLocalUserIo() {
 		//拿到对应的数据
-		InputStream resourceAsStream = this.getClass().getResourceAsStream("/全量的用户.txt");
+		//InputStream resourceAsStream = this.getClass().getResourceAsStream("/全量的用户.txt");
+		InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("user.txt");
+		System.out.println("用户路径为："+this.getClass().getClassLoader().getResource("user.txt"));
+		System.out.println("index路径为："+this.getClass().getClassLoader().getResource("index.html"));
 		return resourceAsStream;
 	}
 
