@@ -37,8 +37,10 @@ import com.yjy.util.ExcelTemplateExporter;
 import cn.afterturn.easypoi.excel.ExcelImportUtil;
 import cn.afterturn.easypoi.excel.entity.ImportParams;
 import cn.afterturn.easypoi.excel.entity.result.ExcelImportResult;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class ExcelService {
 	@Autowired
 	private ExcelTemplateExporter excelTemplateExporter;
@@ -357,9 +359,11 @@ public class ExcelService {
 		if (user == null) {
 			InputStream in=getLocalUserIo();
 			userStrList=getUserNameWithTxt(in);
+			System.out.println("更新前的用户数据为："+JSON.toJSONString(userStrList));
 		} else {
 			userStrList = getUserNameWithTxt(user.getInputStream());
 		}
+		//System.out.println("用户数据为："+JSON.toJSONString(userStrList));
 		// 2.解析文本记录拿到有效行
 		List<String> recordList = getRecordSpilit(record);
 		// 3、处理数据
@@ -369,6 +373,9 @@ public class ExcelService {
 		// 5、最后不报错才执行替换原来的文件的操作
 		if(user!=null) {
 			replaceUser(user);
+			InputStream in=getLocalUserIo();
+			userStrList=getUserNameWithTxt(in);
+			System.out.println("更新后的用户数据为："+JSON.toJSONString(userStrList));
 		}
 	}
 
@@ -380,8 +387,8 @@ public class ExcelService {
 			BufferedReader br = new BufferedReader(ir);
 			
 			
-			File file = new ClassPathResource("/user.txt").getFile();
-			FileOutputStream fileOut = new FileOutputStream(file);
+			
+			FileOutputStream fileOut = new FileOutputStream(new File(getUserPath()));
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fileOut, "UTF-8"));
 
 			int i = 0;
@@ -399,19 +406,31 @@ public class ExcelService {
 
 
 	private InputStream getLocalUserIo() {
+		FileInputStream  fi=null;
+		try {
+			File file = new File(getUserPath());
+			fi = new FileInputStream(file);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return fi;
+	}
+
+
+	private String getUserPath() {
 		//拿到对应的数据
-		//InputStream resourceAsStream = this.getClass().getResourceAsStream("/全量的用户.txt");
-		InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("user.txt");
-		System.out.println("用户路径为："+this.getClass().getClassLoader().getResource("user.txt"));
-		System.out.println("index路径为："+this.getClass().getClassLoader().getResource("index.html"));
-		return resourceAsStream;
+		String url = this.getClass().getClassLoader().getResource("index.html").toString();
+		String path = url.substring(0, url.indexOf("yjy-bill"));
+		String substring = path.substring(path.lastIndexOf(":")-1)+"user.txt";
+		substring=substring.replace("/", "\\");
+		return substring;
 	}
 
 
 	private List<String> getUserNameWithTxt(InputStream in) {
 		List<String> txtRecordList=new ArrayList<String>();	
 		 try {
-			InputStreamReader is = new InputStreamReader(in);
+			InputStreamReader is = new InputStreamReader(in,"UTF-8");
 			BufferedReader bf = new BufferedReader(is);
 			String readLine = bf.readLine();
 			 while (readLine != null) {  
